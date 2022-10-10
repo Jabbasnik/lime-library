@@ -29,7 +29,17 @@ describe("Library", () => {
     });
   });
 
-  describe("Book actions", () => {
+  describe("Book add actions", () => {
+    it("Should revert with the right error if called from non-owner account", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await expect(
+        library
+          .connect(otherAccount)
+          .addBook("Lord of The Rings", "J.R.R Tolkien", 10)
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
     it("Should revert when adding new book to book stock with number of copies is less than 0", async () => {
       const { library } = await loadFixture(deployLibraryFixture);
 
@@ -73,6 +83,30 @@ describe("Library", () => {
       expect(await library.allBooks()).to.have.deep.members([
         ["Lord of The Rings", "J.R.R Tolkien", 10],
         ["Sword of Destiny", "A. Sapkowski", 1],
+      ]);
+    });
+
+    it("Should update number of copies of existing book when book is already in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 15);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 15],
+      ]);
+    });
+
+    it("Should update number of copies of existing book when multiple books are already in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.addBook("Sword of Destiny", "A. Sapkowski", 1);
+      await library.addBook("Sword of Destiny", "A. Sapkowski", 8);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 10],
+        ["Sword of Destiny", "A. Sapkowski", 8],
       ]);
     });
   });

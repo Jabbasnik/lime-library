@@ -10,6 +10,10 @@ contract Library is Ownable {
 
     Counters.Counter public id;
 
+    constructor() {
+        id.increment();
+    }
+
     struct Book {
         string name;
         string author;
@@ -73,7 +77,7 @@ contract Library is Ownable {
     }
 
     function updateBook(bytes32 _nameHash, uint32 _copies) private {
-        uint256 bookId = bookIdMapping[_nameHash];
+        uint256 bookId = bookIdMapping[_nameHash] - 1;
         Book storage existingBook = bookStock[bookId];
         bookStock[bookId].copies = _copies;
         emit BookCopiesUpdated(
@@ -126,7 +130,7 @@ contract Library is Ownable {
         returns (Book memory)
     {
         bytes32 nameHash = keccak256(abi.encodePacked(_name));
-        uint256 bookId = bookIdMapping[nameHash];
+        uint256 bookId = bookIdMapping[nameHash] - 1;
         return bookStock[bookId];
     }
 
