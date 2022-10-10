@@ -2,7 +2,7 @@ const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-describe("Library", function () {
+describe("Library", () => {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
@@ -30,6 +30,30 @@ describe("Library", function () {
   });
 
   describe("Book actions", () => {
+    it("Should revert when adding new book to book stock with number of copies is less than 0", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await expect(
+        library.addBook("Lord of The Rings", "J.R.R Tolkien", 0)
+      ).to.be.revertedWith("Book copies cannot be 0!");
+    });
+
+    it("Should revert when adding new book to book stock with empty book title", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await expect(library.addBook("", "J.R.R Tolkien", 10)).to.be.revertedWith(
+        "Book name cannot be empty!"
+      );
+    });
+
+    it("Should revert when adding new book to book stock with empty book author", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await expect(
+        library.addBook("Lord of The Rings", "", 10)
+      ).to.be.revertedWith("Author name cannot be empty!");
+    });
+
     it("Should add new book to book stock when no book with given name not present in stock", async () => {
       const { library } = await loadFixture(deployLibraryFixture);
 
@@ -51,7 +75,6 @@ describe("Library", function () {
         ["Sword of Destiny", "A. Sapkowski", 1],
       ]);
     });
-    
   });
 
   // describe("Withdrawals", function () {
