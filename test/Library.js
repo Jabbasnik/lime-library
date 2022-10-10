@@ -128,6 +128,63 @@ describe("Library", () => {
     });
   });
 
+  describe("Book borrow actions", () => {
+    it("Should lower number of books in stock when user borrows a copy", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+
+      await library.connect(otherAccount).borrowBook(0);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 9],
+      ]);
+    });
+
+    it("Should revert with the right error if no book copies avaialbe in stock", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 1);
+      await library.borrowBook(0);
+
+      await expect(
+        library.connect(otherAccount).borrowBook(0)
+      ).to.be.revertedWith("Cannot borrow book. No more books in stock.");
+    });
+
+    it("Should revert with the right error if user tries to borrow same book twice", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.connect(otherAccount).borrowBook(0);
+
+      await expect(
+        library.connect(otherAccount).borrowBook(0)
+      ).to.be.revertedWith("Cannot borrow same book twice!");
+    });
+
+    it("Should add user to book history when user borrows book", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.connect(otherAccount).borrowBook(0);
+
+      expect(await library.bookHistory(0)).to.have.deep.members([
+        otherAccount.address,
+      ]);
+    });
+
+    it("Should emit BookBorrowed event when user sucessfully borrowed a book", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await expect(await library.connect(otherAccount).borrowBook(0)).to.emit(
+        library,
+        "BookBorrowed"
+      );
+    });
+  });
+
   // describe("Withdrawals", function () {
   //   describe("Validations", function () {
   //     it("Should revert with the right error if called too soon", async function () {
