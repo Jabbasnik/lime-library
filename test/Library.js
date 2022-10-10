@@ -109,6 +109,23 @@ describe("Library", () => {
         ["Sword of Destiny", "A. Sapkowski", 8],
       ]);
     });
+
+    it("Should emit NewBookAdded event when no book with given name not present in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await expect(
+        library.addBook("Lord of The Rings", "J.R.R Tolkien", 10)
+      ).to.emit(library, "NewBookAdded");
+    });
+
+    it("Should emit BookCopiesUpdated event when book with given name already present in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await expect(
+        library.addBook("Lord of The Rings", "J.R.R Tolkien", 5)
+      ).to.emit(library, "BookCopiesUpdated");
+    });
   });
 
   // describe("Withdrawals", function () {
