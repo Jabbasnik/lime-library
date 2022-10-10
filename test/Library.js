@@ -185,6 +185,50 @@ describe("Library", () => {
     });
   });
 
+  describe("Book return actions", () => {
+    it("Should revert with the right error if user tries to return book he don't own", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.borrowBook(0);
+
+      await expect(
+        library.connect(otherAccount).returnBook(0)
+      ).to.be.revertedWith("Cannot return book, which wasn't borrowed!");
+    });
+
+    it("Should increase number of books in stock when user returns a copy", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.borrowBook(0);
+
+      await library.connect(otherAccount).borrowBook(0);
+      await library.connect(otherAccount).returnBook(0);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 9],
+      ]);
+    });
+
+    it("Should emit BookReturned event when user sucessfully returned a book", async () => {
+      const { library, otherAccount } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+
+      await library.connect(otherAccount).borrowBook(0);
+
+      await expect(library.connect(otherAccount).returnBook(0)).to.emit(
+        library,
+        "BookReturned"
+      );
+    });
+  });
+
+  describe("Library get actions", () => {
+
+  });
+
   // describe("Withdrawals", function () {
   //   describe("Validations", function () {
   //     it("Should revert with the right error if called too soon", async function () {
