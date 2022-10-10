@@ -29,6 +29,31 @@ describe("Library", function () {
     });
   });
 
+  describe("Book actions", () => {
+    it("Should add new book to book stock when no book with given name not present in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 10],
+      ]);
+    });
+
+    it("Should add multiple new books to book stock when no books with given names not present in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.addBook("Sword of Destiny", "A. Sapkowski", 1);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 10],
+        ["Sword of Destiny", "A. Sapkowski", 1],
+      ]);
+    });
+    
+  });
+
   // describe("Withdrawals", function () {
   //   describe("Validations", function () {
   //     it("Should revert with the right error if called too soon", async function () {

@@ -1,5 +1,6 @@
 node_modules
 .env
+.vscode
 coverage
 coverage.json
 typechain
@@ -9,5 +10,6 @@ bin
 #Hardhat files
 cache
 artifacts
+soljson*.js
 
 
