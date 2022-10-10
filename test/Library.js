@@ -225,8 +225,44 @@ describe("Library", () => {
     });
   });
 
-  describe("Library get actions", () => {
+  describe("Library actions", () => {
+    it("Should add users to book history when book being borrowed", async () => {
+      const { library, otherAccount, owner } = await loadFixture(
+        deployLibraryFixture
+      );
 
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.connect(otherAccount).borrowBook(0);
+      await library.borrowBook(0);
+
+      expect(await library.bookHistory(0)).to.have.deep.members([
+        otherAccount.address,
+        owner.address,
+      ]);
+    });
+
+    it("Should revert with the right error if user tries to get history of non existing book", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await expect(library.bookHistory(1)).to.be.revertedWith(
+        "Book with given id does not exist!"
+      );
+    });
+
+    it("Should add users to book history when book being borrowed", async () => {
+      const { library, otherAccount, owner } = await loadFixture(
+        deployLibraryFixture
+      );
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.connect(otherAccount).borrowBook(0);
+      await library.borrowBook(0);
+
+      expect(await library.bookHistory(0)).to.have.deep.members([
+        otherAccount.address,
+        owner.address,
+      ]);
+    });
   });
 
   // describe("Withdrawals", function () {
