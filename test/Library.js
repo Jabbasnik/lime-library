@@ -263,69 +263,113 @@ describe("Library", () => {
         owner.address,
       ]);
     });
+
+    it("Should revert with the right error if user tries to get book by name with empty string", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await expect(library.bookByName("")).to.be.revertedWith(
+        "Book name cannot be empty!"
+      );
+    });
+
+    it("Should get book by name when book present in stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+
+      expect(
+        await library.bookByName("Lord of The Rings")
+      ).to.have.deep.members(["Lord of The Rings", "J.R.R Tolkien", 10]);
+    });
+
+    it("Should get all books from stock", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.addBook("Sword of Destiny", "A. Sapkowski", 100);
+
+      expect(await library.allBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 10],
+        ["Sword of Destiny", "A. Sapkowski", 100],
+      ]);
+    });
+
+    it("Should return only avaliable books in stock when calling allAvailableBooks", async () => {
+      const { library } = await loadFixture(deployLibraryFixture);
+
+      await library.addBook("Lord of The Rings", "J.R.R Tolkien", 10);
+      await library.addBook("Sword of Destiny", "A. Sapkowski", 1);
+      await library.borrowBook(1);
+
+      expect(await library.allAvailableBooks()).to.have.deep.members([
+        ["Lord of The Rings", "J.R.R Tolkien", 10],
+        ["", "", 0],
+      ]);
+    });
   });
-
-  // describe("Withdrawals", function () {
-  //   describe("Validations", function () {
-  //     it("Should revert with the right error if called too soon", async function () {
-  //       const { lock } = await loadFixture(deployLibraryFixture);
-
-  //       await expect(lock.withdraw()).to.be.revertedWith(
-  //         "You can't withdraw yet"
-  //       );
-  //     });
-
-  //     it("Should revert with the right error if called from another account", async function () {
-  //       const { lock, unlockTime, otherAccount } = await loadFixture(
-  //         deployLibraryFixture
-  //       );
-
-  //       // We can increase the time in Hardhat Network
-  //       await time.increaseTo(unlockTime);
-
-  //       // We use lock.connect() to send a transaction from another account
-  //       await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-  //         "You aren't the owner"
-  //       );
-  //     });
-
-  //     it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
-  //       const { lock, unlockTime } = await loadFixture(deployLibraryFixture);
-
-  //       // Transactions are sent using the first signer by default
-  //       await time.increaseTo(unlockTime);
-
-  //       await expect(lock.withdraw()).not.to.be.reverted;
-  //     });
-  //   });
-
-  //   describe("Events", function () {
-  //     it("Should emit an event on withdrawals", async function () {
-  //       const { lock, unlockTime, lockedAmount } = await loadFixture(
-  //         deployLibraryFixture
-  //       );
-
-  //       await time.increaseTo(unlockTime);
-
-  //       await expect(lock.withdraw())
-  //         .to.emit(lock, "Withdrawal")
-  //         .withArgs(lockedAmount, anyValue); // We accept any value as `when` arg
-  //     });
-  //   });
-
-  //   describe("Transfers", function () {
-  //     it("Should transfer the funds to the owner", async function () {
-  //       const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-  //         deployLibraryFixture
-  //       );
-
-  //       await time.increaseTo(unlockTime);
-
-  //       await expect(lock.withdraw()).to.changeEtherBalances(
-  //         [owner, lock],
-  //         [lockedAmount, -lockedAmount]
-  //       );
-  //     });
-  //   });
-  // });
 });
+
+// describe("Withdrawals", function () {
+//   describe("Validations", function () {
+//     it("Should revert with the right error if called too soon", async function () {
+//       const { lock } = await loadFixture(deployLibraryFixture);
+
+//       await expect(lock.withdraw()).to.be.revertedWith(
+//         "You can't withdraw yet"
+//       );
+//     });
+
+//     it("Should revert with the right error if called from another account", async function () {
+//       const { lock, unlockTime, otherAccount } = await loadFixture(
+//         deployLibraryFixture
+//       );
+
+//       // We can increase the time in Hardhat Network
+//       await time.increaseTo(unlockTime);
+
+//       // We use lock.connect() to send a transaction from another account
+//       await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
+//         "You aren't the owner"
+//       );
+//     });
+
+//     it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
+//       const { lock, unlockTime } = await loadFixture(deployLibraryFixture);
+
+//       // Transactions are sent using the first signer by default
+//       await time.increaseTo(unlockTime);
+
+//       await expect(lock.withdraw()).not.to.be.reverted;
+//     });
+//   });
+
+//   describe("Events", function () {
+//     it("Should emit an event on withdrawals", async function () {
+//       const { lock, unlockTime, lockedAmount } = await loadFixture(
+//         deployLibraryFixture
+//       );
+
+//       await time.increaseTo(unlockTime);
+
+//       await expect(lock.withdraw())
+//         .to.emit(lock, "Withdrawal")
+//         .withArgs(lockedAmount, anyValue); // We accept any value as `when` arg
+//     });
+//   });
+
+//   describe("Transfers", function () {
+//     it("Should transfer the funds to the owner", async function () {
+//       const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
+//         deployLibraryFixture
+//       );
+
+//       await time.increaseTo(unlockTime);
+
+//       await expect(lock.withdraw()).to.changeEtherBalances(
+//         [owner, lock],
+//         [lockedAmount, -lockedAmount]
+//       );
+//     });
+//   });
+// });
+// });

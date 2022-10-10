@@ -141,7 +141,7 @@ contract Library is Ownable {
     function allAvailableBooks() public view returns (Book[] memory) {
         Book[] memory books = bookStock;
         Book[] memory availableBooks = new Book[](books.length);
-        for (uint256 i = 0; i < id.current(); i = unsafe_inc(i)) {
+        for (uint256 i = 0; i < id.current() - 1; i = unsafe_inc(i)) {
             if (books[i].copies > 0) {
                 availableBooks[i] = books[i];
             }
