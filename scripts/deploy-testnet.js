@@ -20,9 +20,4 @@ async function deployLibraryContract() {
   await hre.run("print", { message: `Library deployed to ${library.address}`});
 }
 
-deployLibraryContract().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
-
 module.exports = deployLibraryContract;

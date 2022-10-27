@@ -30,9 +30,5 @@ async function deployLibraryContract(_privateKey) {
   });
 }
 
-deployLibraryContract().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
 
 module.exports = deployLibraryContract;
