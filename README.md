@@ -1,4 +1,4 @@
-# Library project for week 0!
+# Library project for week 1 & 2!
 
 Current functionalities:
 * The administrator (owner) of the library is able to add new books and the number of copies in the library.
