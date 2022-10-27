@@ -17,7 +17,7 @@ async function deployLibraryContract() {
 
   await library.deployed();
 
-  await hre.run("print", { message: `Library deployed to ${library.address}` });
+  await hre.run("print", { message: `Library deployed to ${library.address}`});
 }
 
 deployLibraryContract().catch((error) => {

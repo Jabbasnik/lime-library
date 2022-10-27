@@ -20,8 +20,12 @@ async function deployLibraryContract(_privateKey) {
   await hre.run("print", { message: `Library deployed to ${library.address}` });
   await library.deployTransaction.wait(1);
 
+  await hre.run("print", {
+    message: `Veryfying library contract with address: ${library.address}`,
+  });
+
   await hre.run("verify:verify", {
-    address: library.address,
+    address: librexitary.address,
     constructorArguments: [],
   });
 }
