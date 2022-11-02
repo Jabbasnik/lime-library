@@ -13,7 +13,7 @@ const run = async function () {
   const balance = await wallet.getBalance();
   console.log(hre.ethers.utils.formatEther(balance, 18));
 
-  const contractAddress = "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44";
+  const contractAddress = "0x67d269191c92Caf3cD7723F116c85e6E9bf55933";
   const libraryContract = new hre.ethers.Contract(
     contractAddress,
     Library.abi,
@@ -37,11 +37,21 @@ const run = async function () {
     console.log("Transaction was not successful");
     return;
   }
+  console.log("Book borrowed successfully");
 
   const borrowedBookHistory = await libraryContract.bookHistory(0);
   console.log("Addresses that borrowed book: " + borrowedBookHistory);
 
-  
+  const returnedBook = await libraryContract.returnBook(0);
+  const returnedBookReceipt = await returnedBook.wait();
+  if (returnedBookReceipt.status != 1) {
+    console.log("Transaction was not successful");
+    return;
+  }
+  console.log("Book returned successfully");
+
+  const allAvailableBooks = await libraryContract.allAvailableBooks();
+  console.log("Available books: " + allAvailableBooks);
 
 };
 
