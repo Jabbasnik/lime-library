@@ -155,12 +155,12 @@ contract Library is Ownable {
         }
     }
 
-    // receive() external payable {
-    //     emit ValueReceived(msg.sender, msg.value);
-    // }
+    receive() external payable {
+        emit ValueReceived(msg.sender, msg.value);
+    }
 
-    // fallback() external payable {
-    //     require(msg.data.length == 0);
-    //     emit ValueReceived(msg.sender, msg.value);
-    // }
+    fallback() external payable {
+        require(msg.data.length == 0);
+        emit ValueReceived(msg.sender, msg.value);
+    }
 }

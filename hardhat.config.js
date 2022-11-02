@@ -13,19 +13,19 @@ module.exports = {
     },
   },
   networks: {
-    goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-      accounts: `${GOERLI_PRIVATE_KEY}`,
-    },
+    // goerli: {
+    //   url: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+    //   accounts: `${GOERLI_PRIVATE_KEY}`,
+    // },
   },
   etherscan: {
     apiKey: `${ETHERSCAN_API_KEY}`,
   },
 };
 
-task("deploy-testnet", "Deploys contract on a provided network").setAction(
+task("deploy-localhost", "Deploys contract on a provided network").setAction(
   async () => {
-    const deployLibraryContract = require("./scripts/deploy-testnet");
+    const deployLibraryContract = require("./scripts/deploy-localhost");
     await deployLibraryContract();
   }
 );
