@@ -12,5 +12,6 @@ Current functionalities:
 ```shell
 npx hardhat test
 npx hardhat compile
-npx hardhat run scripts/deploy.js
-```
+npx hardhat run scripts/deploy-localhost.js         // for localhost deployment
+npx hardhat run scripts/deploy-goerli.js            // for testnet deployment
+``` 
