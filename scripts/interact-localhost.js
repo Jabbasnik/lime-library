@@ -13,7 +13,7 @@ const run = async function () {
   const balance = await wallet.getBalance();
   console.log(hre.ethers.utils.formatEther(balance, 18));
 
-  const contractAddress = "0x67d269191c92Caf3cD7723F116c85e6E9bf55933";
+  const contractAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
   const libraryContract = new hre.ethers.Contract(
     contractAddress,
     Library.abi,
@@ -28,8 +28,8 @@ const run = async function () {
   }
   console.log("Book added successfully");
 
-    const allBooks = await libraryContract.allBooks();
-    console.log("All books: " + allBooks)
+  const allBooks = await libraryContract.allBooks();
+  console.log("All books: " + allBooks);
 
   const borrowedBook = await libraryContract.borrowBook(0);
   const borrowedBookReceipt = await borrowedBook.wait();
@@ -52,7 +52,6 @@ const run = async function () {
 
   const allAvailableBooks = await libraryContract.allAvailableBooks();
   console.log("Available books: " + allAvailableBooks);
-
 };
 
 run();
